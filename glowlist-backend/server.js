@@ -1,21 +1,44 @@
 const express = require('express');
 const app = express();
-const PORT = 3001;
+const PORT = 5000;
 
 app.use(express.json());
 
-// Cek server
 app.get('/', (req, res) => {
-    res.send('GlowList Backend API berjalan! 🔥✨');
+    res.send('GlowList Backend API berjalan bila! 🔥✨');
 });
 
-// Coba endpoint kedua
-app.get('/coba', (req, res) => {
-    res.send('GlowList Backend API coba sudah berjalan bila! 💗✨');
+const mysql = require('mysql2');
+
+const db = mysql.createConnection({
+    host: 'localhost',
+    user: 'root',
+    password: '',
+    database: 'glowlist_db'
 });
 
-// Jalankan server
+db.connect(err => {
+    if (err) {
+        console.error('Gagal konek ke database:', err);
+    } else {
+        console.log('Berhasil konek ke database GlowList bila 💗✨');
+    }
+});
+
+app.get('/produk', (req, res) => {
+    const sql = 'SELECT * FROM produk';
+    db.query(sql, (err, results) => {
+        if (err) return res.status(500).json({ error: err });
+        res.json(results);
+    });
+});
+app.get('/kategori', (req, res) => {
+    const sql = 'SELECT * FROM kategori';
+    db.query(sql, (err, results) => {
+        if (err) return res.status(500).json({ error: err });
+        res.json(results);
+    });
+});
 app.listen(PORT, () => {
     console.log(`Server GlowList jalan di http://localhost:${PORT}`);
 });
-
